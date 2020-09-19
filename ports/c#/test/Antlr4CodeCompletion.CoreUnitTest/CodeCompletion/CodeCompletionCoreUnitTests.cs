@@ -21,6 +21,63 @@ namespace Antlr4CodeCompletion.CoreUnitTest.CodeCompletion
     public class CodeCompletionCoreUnitTests
     {
         [Fact]
+        public void Completion_Grammar_Antlr()
+        {
+            var cwd = System.IO.Directory.GetCurrentDirectory();
+            // arrange
+            var input = System.IO.File.ReadAllText("../../../Grammar/Expr.g4");
+            var inputStream = new AntlrInputStream(input);
+            var lexer = new ANTLRv4Lexer(inputStream);
+            var tokenStream = new CommonTokenStream(lexer);
+            var parser = new ANTLRv4Parser(tokenStream);
+
+            lexer.RemoveErrorListeners();
+            parser.RemoveErrorListeners();
+
+            var errorListener = new CountingErrorListener();
+            parser.AddErrorListener(errorListener);
+
+            // act
+            // assert
+
+            // Specify our entry point
+            var tree = parser.grammarSpec();
+
+            Check.That(errorListener.ErrorCount).IsEqualTo(0);
+
+            var core = new CodeCompletionCore(parser, null, null);
+
+            // 1) At the input start.
+            var candidates = core.CollectCandidates(0, null);
+
+            Check.That(candidates.Tokens).HasSize(4);
+            Check.That(candidates.Tokens).ContainsKey(ANTLRv4Lexer.DOC_COMMENT);
+            Check.That(candidates.Tokens).ContainsKey(ANTLRv4Lexer.LEXER);
+            Check.That(candidates.Tokens).ContainsKey(ANTLRv4Lexer.PARSER);
+            Check.That(candidates.Tokens).ContainsKey(ANTLRv4Lexer.GRAMMAR);
+
+            Check.That(candidates.Tokens[ANTLRv4Lexer.LEXER]).IsEqualTo(new[] { ANTLRv4Lexer.GRAMMAR });
+            Check.That(candidates.Tokens[ANTLRv4Lexer.PARSER]).IsEqualTo(new[] { ANTLRv4Lexer.GRAMMAR });
+            Check.That(candidates.Tokens[ANTLRv4Lexer.DOC_COMMENT]).HasSize(0);
+            Check.That(candidates.Tokens[ANTLRv4Lexer.GRAMMAR]).HasSize(0);
+
+            Check.That(candidates.Rules.Count == 0);
+
+            // 2) Go to token index = 3 => ";"
+            candidates = core.CollectCandidates(3, null);
+            Check.That(candidates.Tokens).HasSize(1);
+            Check.That(candidates.Tokens).ContainsKey(ANTLRv4Lexer.SEMI);
+            Check.That(candidates.Rules.Count == 0);
+
+            // 3) Go to token index = 14 => just after the ";" of the rule for "expression".
+            candidates = core.CollectCandidates(14, null);
+            Check.That(candidates.Tokens).HasSize(3);
+            Check.That(candidates.Tokens).ContainsKey(ANTLRv4Lexer.CATCH);
+            Check.That(candidates.Tokens).ContainsKey(ANTLRv4Lexer.FINALLY);
+            Check.That(candidates.Tokens).ContainsKey(ANTLRv4Lexer.RULE_REF); // CRASH because -2 is not a token, it is epsilon!
+        }
+
+        [Fact]
         public void Completion_Grammar_SimpleExpression()
         {
             // arrange

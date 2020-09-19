@@ -32,6 +32,13 @@
     <None Update="Grammar\Expr.g4">
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <None Update="Grammar\ANTLRv4Lexer.g4">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Grammar\ANTLRv4Parser.g4">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <Antlr4 Remove="Grammar\LexBasic.g4" />
   </ItemGroup>
 
 </Project>
