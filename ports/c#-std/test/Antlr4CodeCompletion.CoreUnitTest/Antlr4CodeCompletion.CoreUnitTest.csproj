@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4BuildTasks" Version="8.3" />
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8" />
+    <PackageReference Include="AutoBogus" Version="2.6.0" />
+    <PackageReference Include="Bogus" Version="28.0.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Moq" Version="4.12.0" />
+    <PackageReference Include="NFluent" Version="2.6.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Antlr4CodeCompletion.Core\Antlr4CodeCompletion.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="Grammar\Expr.g4" />
+    <Antlr4 Include="Grammar\ANTLRv4Lexer.g4" />
+    <Antlr4 Include="Grammar\ANTLRv4Parser.g4" />
+    <Antlr4 Include="Grammar\XLexer.g4">
+      <Package>Antlr4CodeCompletion.CoreUnitTest.CodeCompletion</Package>
+    </Antlr4>
+    <Antlr4 Include="Grammar\XParser.g4">
+      <Package>Antlr4CodeCompletion.CoreUnitTest.CodeCompletion</Package>
+    </Antlr4>
+  </ItemGroup>
+
+</Project>
